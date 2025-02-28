@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chatbox { width: 50%; margin: auto; border: 1px solid #ddd; padding: 10px; height: 400px; overflow-y: scroll; }
+        .user, .bot { margin: 10px; padding: 5px; border-radius: 5px; }
+        .user { text-align: right; background: #f1f1f1; }
+        .bot { text-align: left; background: #d1ecf1; }
+        input, button { padding: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>Chatbot</h2>
+<div id="chatbox">
+    <div class="bot">Chatbot: Hello! I am your assistant. How can I assist you today?</div>
+</div>
+<input type="text" id="userInput" placeholder="Type your message..." />
+<button onclick="sendMessage()">Send</button>
+
+<script>
+    function sendMessage() {
+        let inputField = document.getElementById("userInput");
+        let userMessage = inputField.value.trim();
+        if (userMessage === "") return;
+
+        let chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML += `<div class='user'>User: ${userMessage}</div>`;
+
+        fetch(`/get-response/?message=${encodeURIComponent(userMessage)}`)
+            .then(response => response.json())
+            .then(data => {
+                chatbox.innerHTML += `<div class='bot'>Chatbot: ${data.response.replace(/\n/g, "<br>")}</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+
+        inputField.value = "";
+    }
+</script>
+
+</body>
+</html>
